@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Security Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Perfil do Usuário
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userId)
+                    && incoming().userId == userId
+                    && incoming().email is string && incoming().email.size() <= 255;
+      allow update: if isOwner(userId)
+                    && incoming().userId == userId;
+      allow delete: if false; // Usuário não pode ser deletado acidentalmente via cliente
+
+      // Projetos de Livro do Usuário
+      match /projects/{projectId} {
+        allow read, write: if isOwner(userId) && isValidId(projectId);
+      }
+
+      // Capítulos do Livro do Usuário
+      match /chapters/{chapterId} {
+        allow read, write: if isOwner(userId) && isValidId(chapterId);
+      }
+
+      // Tarefas / Roteiro do Livro
+      match /tasks/{taskId} {
+        allow read, write: if isOwner(userId) && isValidId(taskId);
+      }
+
+      // Caderno de Ditados Acumulados
+      match /notebooks/{notebookId} {
+        allow read, write: if isOwner(userId) && isValidId(notebookId);
+      }
+
+      // Prosa Literária Lapidada
+      match /polished/{polishedId} {
+        allow read, write: if isOwner(userId) && isValidId(polishedId);
+      }
+    }
+
+    // Documento de teste de conexão com o servidor
+    match /test/{docId} {
+      allow read: if true;
+    }
+  }
+}

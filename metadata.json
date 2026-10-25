@@ -1,0 +1,6 @@
+{
+  "name": "Estúdio Literário",
+  "description": "Plataforma de escrita e organização para escritores com ditado contínuo por voz, digitalização de agendas manuscritas, embasamento em pesquisas e exportação para Word.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

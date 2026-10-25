@@ -1,0 +1,136 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "Perfil do escritor registrado no Estúdio Literário",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 255 },
+        "displayName": { "type": "string", "maxLength": 150 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["userId", "email"]
+    },
+    "project": {
+      "title": "BookProject",
+      "description": "Projeto de livro do autor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "subtitle": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["writing", "completed", "draft"] },
+        "statusLabel": { "type": "string", "maxLength": 100 },
+        "genre": { "type": "string", "maxLength": 100 },
+        "summary": { "type": "string", "maxLength": 5000 },
+        "chaptersCount": { "type": "number" },
+        "lastEdited": { "type": "string", "maxLength": 64 },
+        "accentColor": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "userId", "title", "genre"]
+    },
+    "chapter": {
+      "title": "Chapter",
+      "description": "Capítulo individual de um livro do autor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "bookId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "number": { "type": "number" },
+        "title": { "type": "string", "maxLength": 300 },
+        "subtitle": { "type": "string", "maxLength": 500 },
+        "content": { "type": "string", "maxLength": 250000 },
+        "dateReference": { "type": "string", "maxLength": 100 },
+        "emotionalTag": { "type": "string", "maxLength": 100 },
+        "wordCount": { "type": "number" },
+        "lastUpdated": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "bookId", "userId", "number", "title", "content"]
+    },
+    "task": {
+      "title": "ProjectTask",
+      "description": "Tarefa ou meta no roteiro do projeto do livro",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "bookId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "phase": { "type": "string", "enum": ["fase1", "fase2", "fase3", "fase4"] },
+        "phaseName": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["completed", "in_progress", "planned"] },
+        "category": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "userId", "title", "phase", "status"]
+    },
+    "dictationNotebook": {
+      "title": "DictationNotebook",
+      "description": "Caderno de anotações e ditados acumulados do escritor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "bookId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "notebookTitle": { "type": "string", "maxLength": 300 },
+        "notebookText": { "type": "string", "maxLength": 500000 },
+        "takesCount": { "type": "number" },
+        "lastSaved": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "bookId", "userId", "notebookText"]
+    },
+    "polishedProse": {
+      "title": "PolishedProse",
+      "description": "Prosa lapidada gerada pela IA para o projeto",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "bookId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "polishedText": { "type": "string", "maxLength": 500000 },
+        "suggestedTitle": { "type": "string", "maxLength": 300 },
+        "literaryNote": { "type": "string", "maxLength": 2000 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "bookId", "userId", "polishedText"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "Perfil do escritor proprietário da conta"
+    },
+    "/users/{userId}/projects/{projectId}": {
+      "schema": "project",
+      "description": "Projetos de livros pertencentes estritamente ao autor"
+    },
+    "/users/{userId}/chapters/{chapterId}": {
+      "schema": "chapter",
+      "description": "Capítulos de livros pertencentes estritamente ao autor"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "task",
+      "description": "Tarefas do roteiro do autor"
+    },
+    "/users/{userId}/notebooks/{notebookId}": {
+      "schema": "dictationNotebook",
+      "description": "Caderno de rascunhos e ditados do autor"
+    },
+    "/users/{userId}/polished/{polishedId}": {
+      "schema": "polishedProse",
+      "description": "Prosa literária lapidada do autor"
+    }
+  }
+}
